@@ -1,25 +1,35 @@
 ### Quick Rundown of MLPerf v6.0 Training
-*on the New DeepSeek-v3, GPT-OSS* — 2026/06/18 
+— 2026/06/18 
 
-MLPerf Training v6.0 has been released on June 16.
+MLPerf Training v6.0 was released on June 16, 2026. MLCommons and participating companies have already published their own highlights, results, and platform narratives. This rundown is not meant to re-summarize those announcements. Instead, it adds analysis on the parts I care about as an observer:
+* The new MoE pretraining workloads, *DeepSeek-v3 (671B)* and *GPT-OSS (20B)*, including notable optimization choices and configs.
+* Scaling efficiency across GB200 and GB300 platforms. MI Instinct does not yet have enough data points for scaling analysis, but kudos for its first training submissions across MI300X, MI325X, and MI350X.
+* New AMD MXFP4 recipe submissions, enabling direct MXFP4 vs NVFP4 comparisons on 8-GPU Llama 3.1 8B across B200, B300, GB200, GB300, MI350X, and MI355X.
 
-<!-- cluster scaling efficiency, what optimization/config being used -->
-
-[Rundown][vs9-t5.1] on previous v5.1 (Nov'25)
 Links:
-* [v6.0 Release by MLCommon][v6-rl-mlcommons], [Supplemental Discussion pdf][v6-supplement]
+* [v6.0 Release][v6-rl-mlcommons] by MLCommons, Supplemental Discussion [pdf][v6-supplement]
 * [Result Dashboard][v6-tableau], [Submitters' code][gh-results]
 * Nvidia: [blog][nv-blog], [tech dive][nv-tech]
-* AMD: [blog][amd-blog], [tech dive][amd-tech], [tutorial][amd-repro]
+* AMD: [blog][amd-blog], [tech dive][amd-tech], [tutorials][amd-repro]
 * [Coreweave][cw-blog], [Nebius][nbs-blog], [Lambda][lmbd-blog], [Azure][azure-blog]
+* [My rundown][vs9-t5.1] on previous v5.1 (Nov'25)
+
+---
+
 ### DeepSeek-v3 (671B)
 <img src="assets/scaling-dsv3.svg" width="600" style="height:auto;">
+*To add notes*
+
+---
 
 ### GPT-OSS (20B)
 <img src="assets/scaling-gptoss.png" width="600" style="height:auto;">
+*To add notes*
+---
 
-### MXFP4 vs NVFP4
-*TODO*
+### MXFP4 vs NVFP4 (Llama3.1 8B on 8 x GPUs)
+<img src="assets/fp4-across-8xgpu.png" width="600" style="height:auto;">
+*To add notes*
 
 <!--  -->
 
