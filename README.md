@@ -20,7 +20,7 @@ Links:
 
 * DeepSeek-v3 (DSv3) is a new pretraining workload in v6.0, bringing Mixture-of-Expert (MoE) model family into the benchmark. It is also the largest workload by parameter count 671B.
 * Briefly, DSv3 is the base model behind DeepSeek-R1, the DeepSeek's flagship reasoning model that triggered a major market reaction in early 2025. While Google pioneered large-scale MoE earlier, DSv3 arguably brought MoE into the mainstream for open-weight frontier models.
-* More on how MLCommons integrates DSv3 for benchmarking [here][ref-dsv3], especially around how it circumvent the high load imbalance and variance during early training.
+* More on how MLCommons integrates DSv3 for benchmarking [here][ref-dsv3], especially around how a 50-step trained checkpoint circumvents the high load imbalance and variance during early training.
 * Given its sheer size, DeepSeek-v3 is a cluster-scale benchmark. NVIDIA and CoreWeave submitted results across a wide range of GPU counts, allowing us to estimate scaling efficiency for GB200 NVL72 and GB300 NVL72. **TODO: estimate scaling efficiency**
 * Fastest result: 8,192 GB300 gpus took only 2.021 mins to train DSv3 for ? tokens. **TODO: Add key config. parallelism, precision, mxfp8 attn, nvfp4, full-iteration cuda graph**
 * Worth noting: Nvidia tech blog [previews][nv-tech-nemo2606] another ~1.3× training throughput uplift in NeMo 26.06 via full stack codesign. *Could translate time-to-train under 2 mins with 8K GB300? will revisit this once the NeMo 26.06 image and relevant release notes are available.*
@@ -29,7 +29,11 @@ Links:
 
 ### GPT-OSS (20B)
 <img src="assets/scaling-gptoss.png" width="600" style="height:auto;">
-*To add notes*
+
+* GPT-OSS 20B is another MoE workload introduced in v6.0, with accessibility as the main goal, it is benchmarkable with as little as a single 8-GPU node. Unlike DSv3, GPT-OSS does not start from a pretrained checkpoint. Instead, the benchmark recipe [tunes][ref-gpt-oss] hyperparameters of Adam and weight initialization to bound routing variance and improve benchmarking fairness.
+* How to arrive at the plot above? 41 entries, so pruning and deduplication are needed for readability. Entries are first grouped by GPU model, then deduplicated by GPU count. The legend shows the submitter combination behind each series.
+* **TODO: estimate scaling efficiency**
+* **TODO: address the curvature**
 
 ---
 ### MXFP4 vs NVFP4 (Llama3.1 8B on 8 x GPUs)
