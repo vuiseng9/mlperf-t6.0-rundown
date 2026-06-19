@@ -4,7 +4,7 @@
 MLPerf Training v6.0 was released on June 16, 2026. MLCommons and participating companies have already published their own highlights, results, and platform narratives. This rundown is not meant to re-summarize those announcements. Instead, it adds analysis on the parts I care about as an observer:
 * The new MoE pretraining workloads, *DeepSeek-v3 (671B)* and *GPT-OSS (20B)*, including notable optimization choices and configs.
 * Scaling efficiency across GB200 and GB300 platforms. MI Instinct does not yet have enough data points for scaling analysis, but kudos for its first training submissions across MI300X, MI325X, and MI350X.
-* New AMD MXFP4 recipe submissions, enabling direct MXFP4 vs NVFP4 comparisons on 8-GPU Llama 3.1 8B across B200, B300, GB200, GB300, MI350X, and MI355X.
+* Debut of AMD MXFP4 recipe submissions, enabling MXFP4 vs NVFP4 comparisons on 8-GPU Llama 3.1 8B across B200, B300, GB200, GB300, MI350X, and MI355X.
 
 Links:
 * [v6.0 Release][v6-rl-mlcommons] by MLCommons, Supplemental Discussion [pdf][v6-supplement]
@@ -15,18 +15,23 @@ Links:
 * [My rundown][vs9-t5.1] on previous v5.1 (Nov'25)
 
 ---
-
 ### DeepSeek-v3 (671B)
 <img src="assets/scaling-dsv3.svg" width="600" style="height:auto;">
-*To add notes*
+
+* DeepSeek-v3 (DSv3) is a new pretraining workload in v6.0, bringing Mixture-of-Expert (MoE) model family into the benchmark. It is also the largest workload by parameter count 671B.
+* Briefly, DSv3 is the base model behind DeepSeek-R1, the DeepSeek's flagship reasoning model that triggered a major market reaction in early 2025. While Google pioneered large-scale MoE earlier, DSv3 arguably brought MoE into the mainstream for open-weight frontier models.
+* More on how MLCommons integrates DSv3 for benchmarking [here][ref-dsv3], especially around how it circumvent the high load imbalance and variance during early training.
+* Given its sheer size, DeepSeek-v3 is a cluster-scale benchmark. NVIDIA and CoreWeave submitted results across a wide range of GPU counts, allowing us to estimate scaling efficiency for GB200 NVL72 and GB300 NVL72. **TODO: estimate scaling efficiency**
+* Fastest result: 8,192 GB300 gpus took only 2.021 mins to train DSv3 for ? tokens. **TODO: Add key config. parallelism, precision, mxfp8 attn, nvfp4, full-iteration cuda graph**
+* Worth noting: Nvidia tech blog [previews][nv-tech-nemo2606] another ~1.3× training throughput uplift in NeMo 26.06 via full stack codesign. *Could translate time-to-train under 2 mins with 8K GB300? will revisit this once the NeMo 26.06 image and relevant release notes are available.*
 
 ---
 
 ### GPT-OSS (20B)
 <img src="assets/scaling-gptoss.png" width="600" style="height:auto;">
 *To add notes*
----
 
+---
 ### MXFP4 vs NVFP4 (Llama3.1 8B on 8 x GPUs)
 <img src="assets/fp4-across-8xgpu.png" width="600" style="height:auto;">
 *To add notes*
@@ -40,6 +45,7 @@ Links:
 
 [nv-blog]: https://blogs.nvidia.com/blog/blackwell-mlperf-training-6-0/
 [nv-tech]: https://developer.nvidia.com/blog/nvidia-blackwell-tops-mlperf-training-6-0-with-industry-leading-scale-and-performance/
+[nv-tech-nemo2606]: https://developer.nvidia.com/blog/nvidia-blackwell-tops-mlperf-training-6-0-with-industry-leading-scale-and-performance/#continuous_full-stack_co-design_sum_of_all_the_parts
 
 [amd-blog]: https://www.amd.com/en/blogs/2026/amd-delivers-breakthrough-mlperf-training-6-0-results.html
 [amd-tech]: https://rocm.blogs.amd.com/artificial-intelligence/mlperf-training-v6.0/README.html
@@ -57,3 +63,4 @@ Links:
 [ref-dsv3]: https://mlcommons.org/2026/05/deepseek-v3-training-v6-0
 
 
+[mcore-moe-paper]: https://arxiv.org/abs/2603.07685
