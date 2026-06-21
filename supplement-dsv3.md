@@ -24,12 +24,12 @@
     $$
 
     where: 
-    - \(n\): number of GPUs
-    - \(t(n)\): time-to-train
-    - \(a\): fitted scaling exponent
-    - \(c = \exp(b)\)
+    - $n$: number of GPUs
+    - $t(n)$: time-to-train
+    - $a$: fitted scaling exponent
+    - $c = \exp(b)$
 
-    For GPU doubling, from \(n\) to \(2n\):
+    For GPU doubling, from $n$ to $2n$ gpus:
 
     $$
     t(n) = c n^a
@@ -39,7 +39,7 @@
     t(2n) = c(2n)^a
     $$
 
-    Observed speedup:
+    Observed/Predicted speedup:
 
     $$
     \text{speedup} = \frac{t(n)}{t(2n)}
@@ -74,7 +74,7 @@
     = 2^{-a - 1}
     $$
 
-5. [Coded](./assets/dsv3_fit_loglinear.py) the above fit, GB200 lands at 85.45% scaling efficiency, while GB300 reaches 88.16%.
+5. [Coded](./assets/dsv3_fit_loglinear.py) the above fit, **GB200 lands at 85.45% scaling efficiency**, while **GB300 reaches 88.16%**.
 
 |                             |                |                |                |                |                |
 |-----------------------------|---------------:|---------------:|---------------:|---------------:|---------------:|

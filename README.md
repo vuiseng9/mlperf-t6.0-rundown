@@ -12,7 +12,7 @@ Links:
 * Nvidia: [blog][nv-blog], [tech dive][nv-tech]
 * AMD: [blog][amd-blog], [tech dive][amd-tech], [tutorials][amd-repro]
 * [Coreweave][cw-blog], [Nebius][nbs-blog], [Lambda][lmbd-blog], [Azure][azure-blog]
-* [My rundown][vs9-t5.1] on previous v5.1 (Nov'25)
+* My rundown on previous [v5.1 (Nov'25)][vs9-t5.1]
 
 ---
 ### DeepSeek-v3 (671B)
@@ -22,14 +22,14 @@ Links:
 * Briefly, DSv3 is the base model behind DeepSeek-R1, the DeepSeek's flagship reasoning model that triggered a major market reaction in early 2025. While Google pioneered large-scale MoE earlier, DSv3 arguably brought MoE into the mainstream for open-weight frontier models.
 * More on how MLCommons integrates DSv3 for benchmarking [here][ref-dsv3], especially around how a 50-step trained checkpoint circumvents the high load imbalance and variance during early training.
 * Given its sheer size, DeepSeek-v3 is a cluster-scale benchmark. NVIDIA and CoreWeave submitted results across a wide range of GPU counts, allowing us to estimate scaling efficiency for GB200 NVL72 and GB300 NVL72. 
-* **Scaling Efficiency: 85.4% on GB200, 88.2% on GB300, solid strong-scaling overall.** [See][supp-dsv3] how we fit log-linear and arrive at estimated efficiency.
+* **Scaling Efficiency: 85.5% on GB200, 88.2% on GB300, solid strong-scaling overall.** [See][supp-dsv3] how we fit log-linear and arrive at estimated efficiency.
 * **Fastest result**: 8,192 GB300 gpus took only 2.021 mins to train DSv3 for 3+B tokens. Key configs: MXFP8 recipe including attention on top typical linear, full-iteration cuda-graph, EP communication using [HybridEP][hybridep-blog] and overlapping it via 1F1B PP schedule. See official technical [highlights][nv-tech] and discussion at depth in [this][mcore-moe-report] technical report.
 * **Worth noting**: Nvidia tech blog [previews][nv-tech-nemo2606] another ~1.3× training throughput uplift in NeMo 26.06 via full stack codesign on GB300. *Could translate time-to-train under 2 mins with 8K GB300? will revisit this once the NeMo 26.06 image and relevant release notes are available.*
 
 ---
 
 ### GPT-OSS (20B)
-<img src="assets/scaling-gptoss.png" width="600" style="height:auto;">
+<img src="assets/scaling-gptoss.png" width="800" style="height:auto;">
 
 * GPT-OSS 20B is another MoE workload introduced in v6.0, with accessibility as the main goal, it is benchmarkable with as little as a single 8-GPU node. Unlike DSv3, GPT-OSS does not start from a pretrained checkpoint. Instead, the benchmark recipe [tunes][ref-gpt-oss] hyperparameters of Adam and weight initialization to bound routing variance and improve benchmarking fairness.
 * How to arrive at the plot above? 41 entries, so pruning and deduplication are needed for readability. Entries are first grouped by GPU model, then deduplicated by GPU count. The legend shows the submitter combination behind each series.
@@ -40,8 +40,24 @@ Links:
 ---
 ### MXFP4 vs NVFP4 (Llama3.1 8B on 8 x GPUs)
 <img src="assets/fp4-across-8xgpu.png" width="600" style="height:auto;">
-*To add notes*
 
+| Metric                |  MI350X |  MI355X |   B200 |  GB200 |   B300 |  GB300 |
+|-----------------------|--------:|--------:|-------:|-------:|-------:|-------:|
+| Precision             |   MXFP4 |   MXFP4 |  NVFP4 |  NVFP4 |  NVFP4 |  NVFP4 |
+| Base LR               |    1e-3 |    8e-4 |   4e-4 |   4e-4 | 4.4e-4 |   4e-4 |
+| Grad Accum            |       2 |       2 |      1 |      1 |      1 |      1 |
+| GBS                   |      32 |      32 |     16 |     16 |     16 |     16 |
+| Steps to converge     |    5760 |    5760 |  11520 |  11520 |  10752 |  10752 |
+| # Trained Tokens (B)  |    1.51 |    1.51 |   1.51 |   1.51 |   1.41 |   1.41 |
+| Avg Step Time (ms)    |     535 |     431 |    415 |    413 |    384 |    330 |
+| Time-to-train (mins)  |   109.8 |    86.8 |   83.7 |   79.7 |   72.0 |   63.5 |
+
+Datasheet: [MI355X][mi355x-datasheet], [MI350X][mi350x-datasheet], [B200][b200-datasheet], [GB200][gb200-datasheet], [B300][b300-datasheet], [GB300][gb300-datasheet]
+
+* Contributed by AMD, training in native MXFP4 has made its debut into benchmark this time round. This completes current-generation FP4 coverage in the benchmark across the two main FP4 formats: MXFP4 and NVFP4.
+* Quick recap: MXFP4 quantizes every 32 elements using a power-of-two FP8 (e8m0) scale, while NVFP4 uses 16-element groups with FP8 (e4e3) scales. Both use FP4 (e2m1) as the quantized datatype. More discussion and references [here][vs9-fp4].
+* From an observer's perspective, the interesting comparison is training recipe design around mxfp4 and nvfp4, and what that reveals about the observed training performance. Llama 3.1 8B is the best candidate because it has the most complete 8-GPU coverage. The plot above is constructed by filtering 68 entries down to 8-GPU submissions and selecting the best time-to-train for each GPU type.
+* *More notes coming.*
 <!--  -->
 
 [v6-rl-mlcommons]: https://mlcommons.org/2026/06/mlperf-training-v6-0-results/
