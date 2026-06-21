@@ -21,9 +21,10 @@ Links:
 * DeepSeek-v3 (DSv3) is a new pretraining workload in v6.0, bringing Mixture-of-Expert (MoE) model family into the benchmark. It is also the largest workload by parameter count 671B.
 * Briefly, DSv3 is the base model behind DeepSeek-R1, the DeepSeek's flagship reasoning model that triggered a major market reaction in early 2025. While Google pioneered large-scale MoE earlier, DSv3 arguably brought MoE into the mainstream for open-weight frontier models.
 * More on how MLCommons integrates DSv3 for benchmarking [here][ref-dsv3], especially around how a 50-step trained checkpoint circumvents the high load imbalance and variance during early training.
-* Given its sheer size, DeepSeek-v3 is a cluster-scale benchmark. NVIDIA and CoreWeave submitted results across a wide range of GPU counts, allowing us to estimate scaling efficiency for GB200 NVL72 and GB300 NVL72. **TODO: estimate scaling efficiency**
-* Fastest result: 8,192 GB300 gpus took only 2.021 mins to train DSv3 for ? tokens. **TODO: Add key config. parallelism, precision, mxfp8 attn, nvfp4, full-iteration cuda graph**
-* Worth noting: Nvidia tech blog [previews][nv-tech-nemo2606] another ~1.3× training throughput uplift in NeMo 26.06 via full stack codesign. *Could translate time-to-train under 2 mins with 8K GB300? will revisit this once the NeMo 26.06 image and relevant release notes are available.*
+* Given its sheer size, DeepSeek-v3 is a cluster-scale benchmark. NVIDIA and CoreWeave submitted results across a wide range of GPU counts, allowing us to estimate scaling efficiency for GB200 NVL72 and GB300 NVL72. 
+* **Scaling Efficiency: 85.4% on GB200, 88.2% on GB300, solid strong-scaling overall.** [See][supp-dsv3] how we fit log-linear and arrive at estimated efficiency.
+* **Fastest result**: 8,192 GB300 gpus took only 2.021 mins to train DSv3 for 3+B tokens. Key configs: MXFP8 recipe including attention on top typical linear, full-iteration cuda-graph, EP communication using [HybridEP][hybridep-blog] and overlapping it via 1F1B PP schedule. See official technical [highlights][nv-tech] and discussion at depth in [this][mcore-moe-report] technical report.
+* **Worth noting**: Nvidia tech blog [previews][nv-tech-nemo2606] another ~1.3× training throughput uplift in NeMo 26.06 via full stack codesign on GB300. *Could translate time-to-train under 2 mins with 8K GB300? will revisit this once the NeMo 26.06 image and relevant release notes are available.*
 
 ---
 
@@ -51,7 +52,8 @@ Links:
 [nv-blog]: https://blogs.nvidia.com/blog/blackwell-mlperf-training-6-0/
 [nv-tech]: https://developer.nvidia.com/blog/nvidia-blackwell-tops-mlperf-training-6-0-with-industry-leading-scale-and-performance/
 [nv-tech-nemo2606]: https://developer.nvidia.com/blog/nvidia-blackwell-tops-mlperf-training-6-0-with-industry-leading-scale-and-performance/#continuous_full-stack_co-design_sum_of_all_the_parts
-[mcore-moe-paper]: https://arxiv.org/abs/2603.07685
+[mcore-moe-report]: https://arxiv.org/abs/2603.07685
+[hybridep-blog]: https://developer.nvidia.com/blog/optimizing-communication-for-mixture-of-experts-training-with-hybrid-expert-parallel/
 
 [amd-blog]: https://www.amd.com/en/blogs/2026/amd-delivers-breakthrough-mlperf-training-6-0-results.html
 [amd-tech]: https://rocm.blogs.amd.com/artificial-intelligence/mlperf-training-v6.0/README.html
